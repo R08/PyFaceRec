@@ -1,49 +1,42 @@
-#!/usr/bin/python
-## The equivalent of:
-##  "Basic Functions: Initialize, Create a Node and Read Data"
-## in the OpenNI user guide.
+#!/usr/bin/python2
 
-# This template provides the basic structure of any OpenNI program:
-# initialize a Context, create and start a Node, and keep processing its data.
-# ==============================================================================
-
-
-"""
-TODO: Put the description of this script here.
-"""
 
 from openni import *
+import pygame
 
-shouldRun = True
 
-try:
+#--------------------
+#   Globals
+#--------------------
+#screen
+#surf
 
-    ctx = Context()
 
-    # Initialize context object
-    ctx.init()
+#def initOpenNI():
+ctx = Context()
+ctx.init()
 
-    # Create a DepthGenerator node
-    depth = DepthGenerator()
-    depth.create(ctx)
+# Create an image generator
+img = ImageGenerator()
+img.create(ctx)
 
-    # Make it start generating data
-    ctx.start_generating_all()
+# Start generating
+ctx.start_generating_all()
 
-    # Main loop
-    while shouldRun:
-        try:
-            # Wait for new data to be available
-            ctx.wait_one_update_all(depth)
-        except OpenNIError, err:
-            print "Failed updating data:", err
-        else:
-            # Take current depth map
-            depthMap = depth.get_tuple_depth_map()
 
-            # TODO: process depth map
+WINSIZE = 640,480
+screen = pygame.display.set_mode(WINSIZE,0,8)
 
-except OpenNIError, err:
-    # Inform the user about the error.
-    print "OpenNI found an error:", err
+
+
+while True:
+    
+    # Update
+    nRetVal = ctx.wait_one_update_all(img)
+    img_rgb = img.get_synced_image_map()
+    surf = pygame.image.frombuffer(img_rgb,(640,480), 'RGB')
+ 
+    # Draw
+    screen.blit(surf, (0, 0))
+    pygame.display.flip()
 
