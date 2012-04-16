@@ -6,6 +6,7 @@
 *.exe
 *.o
 *.pyc
+*.so
 
 # OS generated files #
 ######################
@@ -18,7 +19,7 @@ Thumbs.db
 # Backup files #
 ################
 *.swp
-
+*.swo
 
 # Bin Files #
 #############
