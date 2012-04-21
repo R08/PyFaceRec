@@ -26,7 +26,7 @@ class RGB_Camera(HW_Interface):
         self.ctx.start_generating_all()
 
 
-        # Stuff to draw with pygame
+        # Needed to draw with pygame
         WINSIZE = 640,480
         self.screen = pygame.display.set_mode(WINSIZE,0,8)
 
@@ -64,7 +64,9 @@ class RGB_Camera(HW_Interface):
         Returns a numpy array representation of the current frame.
         """
         self.update()
-        return numpy.array(self.img.get_tuple_image_map(), dtype='uint8')
+        np = numpy.array(self.img.get_tuple_image_map(), dtype='uint8')
+        np.shape = (480, 640, 3)
+        return np
 
 
 
