@@ -82,7 +82,7 @@ class IR_Camera(HW_Interface):
         """
         print "Updating Depth Generator..."
 
-        err = ctx.wait_one_update_all(self.depth)
+        err = self.ctx.wait_one_update_all(self.depth)
         print "Done updating"
  
     
@@ -103,7 +103,10 @@ class IR_Camera(HW_Interface):
 
         self.update()
         #return array(self.depth.get_tuple_depth_map(), dtype='uint16')
-        return fromstring(self.depth.get_raw_depth_map(), dtype='uint8')
+        a = fromstring(self.depth.get_raw_depth_map(), dtype='uint16')
+        a.shape = (480, 640)
+        a = a.astype(uint8)
+        return a
 
 
 
@@ -127,7 +130,7 @@ class IR_Camera(HW_Interface):
         """
         Return the depth matrix
         """
-
+        return self.depth.map
 
     def draw(self):
         """
