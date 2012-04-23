@@ -34,6 +34,7 @@ IR = IR_Interface.IR_Camera()
 # OpenCV Face Detection stuff
 haar_face = FaceRec.HaarDetectFace()
 
+face_rec = FaceRec.FaceRec()
 
 
 # Initilize glumpy stuff
@@ -44,6 +45,7 @@ haar_img = glumpy.image.Image(haar_frame)
 
 
 
+#crop_face = np.zeros([23, 23])
 
     
 # Draw with glumpy
@@ -65,7 +67,8 @@ def on_idle(dt):
 def on_key_press(key, modifiers):
     if key == glumpy.window.key.SPACE:
         print "Key Press: SPACE"
-        haar_face.getCropedFaceImg(RGB, IR)
+        crop_face = haar_face.getCropedFaceImg(RGB, IR)
+        face_rec.preprocess(crop_face)
 
 
 

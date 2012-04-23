@@ -9,7 +9,9 @@ from PIL import Image
 from PIL import ImageFilter
 from PIL import ImageOps
 from PIL.ImageColor import getrgb
+#from PIL import convert
 import numpy as np
+from math import floor
 
 class FaceDataSet():
     """
@@ -89,11 +91,13 @@ class HaarDetectFace():
         rects = self.detect(gray, self.cascade)
         if len(rects) > 0:
             rect = rects[0]
-            x = (rect[3] - rect[1])/2
-            y = (rect[2] - rect[0])/2
-            print x, y
+            x = (rect[0] + rect[1])/2
+            y = (rect[2] + rect[3])/2
+            #print x, y
             if x > 0 and x < 640 and y > 0 and y < 480:
-                print IR.getDepthMap()[int(x), int(y)]
+                d = IR.getDepthMap()[int(x), int(y)]
+                if d > 0:
+                    print "Face depth from camera: ", d
                 #small_rect = np.array([x, x+2, y, y+2]).astype(np.uint32)
 
 
@@ -109,8 +113,8 @@ class HaarDetectFace():
         for x1, y1, x2, y2 in rects:
             roi = gray[y1:y2, x1:x2]
             vis_roi = vis[y1:y2, x1:x2]
-            #subrects = detect(roi.copy(), nested)
-            #draw_rects(vis_roi, subrects, (255, 0, 0))
+            subrects = self.detect(roi.copy(), self.nested)
+            self.draw_rects(vis_roi, subrects, (255, 0, 0))
 
 
         return (vis, rects)
@@ -126,29 +130,24 @@ class HaarDetectFace():
         
         frame = self.getFrame(RGB, IR)
         
-        vis = IR.getNumpyArray()
+        vis = np.array(IR.getDepthMap(), dtype='int')#.getNumpyArray()
+        #print type(vis[0])
+        vis.shape = (480, 640)
+
         rects = frame[1]
-        print 'IR shape: ', vis.shape
+        #print 'IR shape: ', vis.shape
 
         tol = 20
         if len(rects) > 0:
             rect = rects[0]
             vis = vis[rect[1]-tol:rect[3]+tol, rect[0]-tol+tol/2:rect[2]+tol*2]
 
-            pi = Image.fromstring('L', (vis.shape[1], vis.shape[0]), vis.tostring())
+            #pi = Image.fromstring('L', (vis.shape[1], vis.shape[0]), vis.tostring())
 
-            # Apply filters and effects
-            pi2 = pi.filter(ImageFilter.MedianFilter(7))
-            pi2.convert('RGB')
-            pi2 = ImageOps.equalize(pi2)
-            #r, g, b = getrgb(color)
-            pi2 = ImageOps.colorize(pi2, "black", "yellow")
-            #pi2 = ImageOps.colorize(pi2, (0,0,0), (255,255,255))
-
-
+            print vis.shape
             # Display images
-            pi.show() 
-            pi2.show()
+            #pi.show() 
+            #pi2.show()
             return vis
 
 
@@ -166,15 +165,67 @@ class FaceRec():
 
 
 
-    def preprocess(self):
+    def preprocess(self, vis):
         """
         Preforms preprocessing on the images to remove and/or correct
           any artifacts or abnormalities.
         """
 
-        print "Preprocessing goes here"
+        vis2 = vis.astype(np.uint8)
+        pi = Image.fromstring('L', (vis2.shape[1], vis2.shape[0]), vis2.tostring())
+        pi.show()
 
 
+        # Apply filters and effects
+        pi = pi.filter(ImageFilter.MedianFilter(7))
+        pi.show()
+        #pi2.convert('RGB')
+        pi = ImageOps.equalize(pi)
+        pi.show()
+        pi = ImageOps.colorize(pi, "black", "yellow")
+        
+        pi.show()
+
+
+        a = np.array(vis, dtype='int')
+        #a.astype(np.uint32)
+
+        def findMin(a):
+            if a < 20:
+                return 30000 
+
+            else:
+                return a
+
+
+        vecfunc = np.vectorize(findMin)
+        row_shape = a.shape[1]
+        col_shape = a.shape[0]
+
+        a = a.reshape(-1, 1) 
+        #print "SHAPE: ", a.shape
+        #print a
+        a_min = vecfunc(a)
+        min_value = np.amin(a_min)
+
+        
+        a_min.shape = (row_shape, col_shape)
+        a_min_index = np.argmin(a_min)
+        
+        row_index = a_min_index % row_shape
+        col_index = floor(a_min_index / col_shape)
+
+        print "MIN: ", min_value
+        print "Min index (nose position): (" , row_index, ", ", col_index, ")"
+
+
+        # Change to pil form and resize
+        a2 = a.astype(np.uint8)
+        #pi = Image.fromarray(a2).convert('RGB')
+        #pi.show()
+        #pi = Image.fromstring('L', (row_shape, col_shape), a)
+        #pi2 = ImageOps.fit(pi, (200, 200))
+        #pi2.show()
 
 
     def faceRec(self):
