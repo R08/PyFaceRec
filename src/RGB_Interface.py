@@ -4,6 +4,7 @@ Kinect Camera Interface
 from openni import *
 import pygame
 from PIL import Image
+from PIL import *
 from HW_Interface import *
 import numpy
 
@@ -26,11 +27,6 @@ class RGB_Camera(HW_Interface):
         self.ctx.start_generating_all()
 
 
-        # Needed to draw with pygame
-        WINSIZE = 640,480
-        self.screen = pygame.display.set_mode(WINSIZE,0,8)
-
-
 
     def update(self):
         """
@@ -51,8 +47,8 @@ class RGB_Camera(HW_Interface):
 
     def getFrame(self):
         """
-        Returns the most recent frame from the kinects RGB camera as an 
-            RGB image. 
+        Returns the most recent frame from the kinects RGB camera as a 
+            PIL image with the RGB mode. 
         """
         self.update()
         return Image.fromstring('RGB', (640, 480), self.getString())
@@ -64,7 +60,8 @@ class RGB_Camera(HW_Interface):
         Returns a numpy array representation of the current frame.
         """
         self.update()
-        np = numpy.array(self.img.get_tuple_image_map(), dtype='uint8')
+        #np = numpy.array(self.img.get_tuple_image_map(), dtype='uint8')
+        np = numpy.fromstring(self.img.get_raw_image_map(), dtype='uint8')
         np.shape = (480, 640, 3)
         return np
 
@@ -72,7 +69,7 @@ class RGB_Camera(HW_Interface):
 
     def getSurf(self):
         """
-        Returns a python surface of the most recent frame from the kinects
+        Returns a pygame surface of the most recent frame from the kinects
             RGB camera.
         """
         im = self.getFrame()
@@ -80,9 +77,13 @@ class RGB_Camera(HW_Interface):
        
 
 
-    def draw(self):
+    def imShow(self):
+        im = self.getFrame()
+        im.imshow()
+
+    def draw(self, screen):
         """
         Draws the current frame in a pygame window.
         """
-        self.screen.blit(self.getSurf(), (0, 0))
+        screen.blit(self.getSurf(), (0, 0))
         pygame.display.flip()
