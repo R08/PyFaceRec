@@ -5,11 +5,11 @@ from openni import *
 import pygame
 from PIL import *
 from numpy import * 
-
+from HW_Interface import *
 
 # Start Context Node.
-ctx = Context()
-ctx.init()
+#ctx = Context()
+#ctx.init()
 
 
 def colorFunc(a):
@@ -57,7 +57,7 @@ def colorFunc2(a):
 IR_Camera Class:
 """
 
-class IR_Camera():
+class IR_Camera(HW_Interface):
     """
     Provides basic interaction with the kinects IR camera.
     """
@@ -68,7 +68,7 @@ class IR_Camera():
         """
         Create and attach an image generator to the context node.
         """
-        print "initalizing generatiors"
+        print "Initalizing Depth Generator for IR Camera."
         self.depth.create(ctx)
         ctx.start_generating_all()
         self.depth.set_resolution_preset(RES_VGA)

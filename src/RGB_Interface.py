@@ -48,7 +48,7 @@ class RGB_Camera(HW_Interface):
     def getFrame(self):
         """
         Returns the most recent frame from the kinects RGB camera as a 
-            PIL image with the RGB mode. 
+          PIL image with the RGB mode. 
         """
         self.update()
         return Image.fromstring('RGB', (640, 480), self.getString())
@@ -60,7 +60,6 @@ class RGB_Camera(HW_Interface):
         Returns a numpy array representation of the current frame.
         """
         self.update()
-        #np = numpy.array(self.img.get_tuple_image_map(), dtype='uint8')
         np = numpy.fromstring(self.img.get_raw_image_map(), dtype='uint8')
         np.shape = (480, 640, 3)
         return np
@@ -70,7 +69,7 @@ class RGB_Camera(HW_Interface):
     def getSurf(self):
         """
         Returns a pygame surface of the most recent frame from the kinects
-            RGB camera.
+          RGB camera.
         """
         im = self.getFrame()
         return pygame.image.fromstring(self.getString(), (640, 480), im.mode)
