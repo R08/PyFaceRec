@@ -69,10 +69,10 @@ class IR_Camera(HW_Interface):
         Create and attach an image generator to the context node.
         """
         print "Initalizing Depth Generator for IR Camera."
-        self.depth.create(ctx)
-        ctx.start_generating_all()
+        self.depth.create(self.ctx)
         self.depth.set_resolution_preset(RES_VGA)
         self.depth.fps = 30
+        self.ctx.start_generating_all()
 
 
 
