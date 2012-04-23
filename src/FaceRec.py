@@ -103,7 +103,7 @@ class HaarDetectFace():
         vis = img.copy()
         #self.draw_rects(vis, small_rect, (255, 0, 0))
         self.draw_rects(vis, rects, (0, 255, 0))
-        print type(rects[0])
+        #print type(rects[0])
 
 
         for x1, y1, x2, y2 in rects:
