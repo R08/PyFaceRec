@@ -2,14 +2,11 @@
 Kinect IR Camera Interface
 """
 from openni import *
-import pygame
 from PIL import *
 from numpy import * 
 from HW_Interface import *
 
-# Start Context Node.
-#ctx = Context()
-#ctx.init()
+
 
 
 def colorFunc(a):
@@ -53,15 +50,15 @@ def colorFunc2(a):
     return array([r, g, b], dtype='float32')
 
 
-"""
-IR_Camera Class:
-"""
+
+
 
 class IR_Camera(HW_Interface):
     """
     Provides basic interaction with the kinects IR camera.
     """
     depth = DepthGenerator()
+
 
 
     def __init__(self):
@@ -76,6 +73,7 @@ class IR_Camera(HW_Interface):
 
 
 
+
     def update(self):
         """
         Updates the Depth generator node.
@@ -86,12 +84,15 @@ class IR_Camera(HW_Interface):
         print "Done updating"
  
     
+
+
     def getFrame(self):
         """
         Returns the most recent frame from the kinects IR camera.
         """ 
         self.update()
         return Image.fromstring('P',( 640, 480 ), self.depth.get_raw_depth_map())
+
 
 
 
@@ -102,27 +103,11 @@ class IR_Camera(HW_Interface):
         print "Creating Numpy array of depth Map:..."
 
         self.update()
-        #return array(self.depth.get_tuple_depth_map(), dtype='uint16')
         a = fromstring(self.depth.get_raw_depth_map(), dtype='uint16')
         a.shape = (480, 640)
         a = a.astype(uint8)
         return a
 
-
-
-    def getSurf(self):
-        """
-        Returns a surface of most recent frame from the kinects IR camera.
-        """       
-        depImg = self.rainbowSurf()
-        depImg.shape = (480, 640, 3)
-
-        pi = Image.fromarray(depImg)
-        pi.show()
-        print 'Max: ', max(fromstring(self.depth.get_raw_depth_map_8()))
-        pi2 = Image.fromstring('L',( 640, 480 ), self.depth.get_raw_depth_map_8())        
-        pi2.show()
-        return pygame.image.fromstring(depImg.tostring(), (640, 480), 'RGB')
 
 
 
@@ -132,21 +117,23 @@ class IR_Camera(HW_Interface):
         """
         return self.depth.map
 
+
+
+
     def draw(self):
         """
         For debuggin, used to draw map to the screen in this file.
         """
-        screen.blit(self.getSurf(), (0, 0))
-        pygame.display.flip()
+        return None
 
 
-
+   
+   
     def rainbowSurf(self):
         """
         Returns a rainbow colored depth map as a surface.
         """
         depArray = array(self.depth.map, dtype='uint16')
-        #print type(depArray[1])
 
         vFunc = vectorize(colorFunc, otypes=[ndarray])
         depArray2 = vstack(vFunc(depArray))
