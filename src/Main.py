@@ -38,12 +38,14 @@ face_rec = FaceRec.FaceRec()
 
 
 # Initilize glumpy stuff
-haar_fig = glumpy.figure((1280, 480))
+haar_fig = glumpy.figure((1280, 1760))
 haar_frame = haar_face.getFrame(RGB, IR)[0]
 haar_img = glumpy.image.Image(haar_frame)
 
 depth_frame = IR.getNumpyArray().astype(np.float32)
+depth_frame_8 = IR.getNumpyArray_8()
 depth_img = glumpy.image.Image(depth_frame)
+depth_img_8 = glumpy.image.Image(depth_frame_8)
 
 
 #crop_face = np.zeros([23, 23])
@@ -51,20 +53,25 @@ depth_img = glumpy.image.Image(depth_frame)
     
 
 # Draw with glumpy
+
+# 8bit |  ...  #
+# RGB  | 32bit #
 @haar_fig.event
 def on_draw():
     haar_fig.clear()
     haar_img.draw(x=0, y=0, z=0, width=640, height=480)
-    depth_img.draw(x=540, y=0, z=0, width=640, height=480)
+    depth_img.draw(x=640, y=0, z=0, width=640, height=480)
+    depth_img_8.draw(x=0, y=480, z=0, width=640, height=480)
 
 
 @haar_fig.event
-def on_idle(dt):
-    #h_frame = haar_face.getFrame(RGB, IR)[0]    
-    haar_frame[...] = haar_face.getFrame(RGB, IR)[0] #h_frame
+def on_idle(dt):   
+    haar_frame[...] = haar_face.getFrame(RGB, IR)[0]
     depth_frame[...] = IR.getNumpyArray().astype(np.float32)
+    depth_frame_8[...] = IR.getNumpyArray_8()
     haar_img.update()
     depth_img.update()
+    depth_img_8.update()
     haar_fig.redraw()
 
 

@@ -99,12 +99,18 @@ class IR_Camera(HW_Interface):
         """
         self.update()
         a = fromstring(self.depth.get_raw_depth_map(), dtype='uint16')
-        #a = array(self.depth.map)
         a.shape = (480, 640)
-        #a = a.astype(uint8)
         return a
 
-
+    
+    def getNumpyArray_8(self):
+        """
+        Returns a numpy array representation of the current frame in 8bits.
+        """
+        self.update()
+        a = fromstring(self.depth.get_raw_depth_map_8(), dtype='uint8')
+        a.shape = (480, 640)
+        return a
 
 
     def getDepthMap(self):
