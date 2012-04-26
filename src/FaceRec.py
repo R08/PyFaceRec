@@ -8,10 +8,35 @@ from cv2 import cv   # Legacy support for opencv ver. < 2.x
 from PIL import Image
 from PIL import ImageFilter
 from PIL import ImageOps
+from PIL import *
+import ImageDraw
 from PIL.ImageColor import getrgb
 #from PIL import convert
 import numpy as np
 from math import floor
+
+#from scipy.interpolate import girddata
+
+
+
+
+
+
+
+def draw_rects(self, img, rects, color):
+    """
+    Draws a square of of a given color at a given location on a given image.
+    """
+    for x1, y1, x2, y2 in rects:
+        cv2.rectangle(img, (x1, y1), (x2, y2), color, 2)
+
+
+
+
+
+
+
+
 
 class FaceDataSet():
     """
@@ -173,18 +198,18 @@ class FaceRec():
 
         vis2 = vis.astype(np.uint8)
         pi = Image.fromstring('L', (vis2.shape[1], vis2.shape[0]), vis2.tostring())
-        pi.show()
+        #pi.show()
 
 
         # Apply filters and effects
         pi = pi.filter(ImageFilter.MedianFilter(7))
-        pi.show()
-        #pi2.convert('RGB')
+        #pi.show()
+        pi.convert('RGB')
         pi = ImageOps.equalize(pi)
-        pi.show()
+        #pi.show()
         pi = ImageOps.colorize(pi, "black", "yellow")
         
-        pi.show()
+        #pi.show()
 
 
         a = np.array(vis, dtype='int')
@@ -212,20 +237,33 @@ class FaceRec():
         a_min.shape = (row_shape, col_shape)
         a_min_index = np.argmin(a_min)
         
-        row_index = a_min_index % row_shape
-        col_index = floor(a_min_index / col_shape)
+        row_index = int(a_min_index % row_shape)
+        col_index = int(floor(a_min_index / col_shape))
 
         print "MIN: ", min_value
         print "Min index (nose position): (" , row_index, ", ", col_index, ")"
 
-
+        #draw = ImageDraw.Draw(pi)
+        #draw.line([row_index, col_index])#, (255, 0, 0))
+        #pi.show()
         # Change to pil form and resize
-        a2 = a.astype(np.uint8)
+        a2 = np.fromstring(pi.tostring(), dtype='uint8')
+        print a2.shape
+        a2.shape = (col_shape, row_shape, 3)
+        cv2.rectangle(a2, (row_index, col_index), (row_index+2, col_index+2), (255, 0, 0) , 2)
+
+        pi = Image.fromstring('RGB', (row_shape, col_shape), a2.tostring())
+        pi.show()
+        #a.astype(np.uint8)
+        
         #pi = Image.fromarray(a2).convert('RGB')
         #pi.show()
         #pi = Image.fromstring('L', (row_shape, col_shape), a)
         #pi2 = ImageOps.fit(pi, (200, 200))
         #pi2.show()
+
+        #return (row_index, col_index)
+
 
 
     def faceRec(self):
