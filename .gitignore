@@ -1,3 +1,10 @@
+# Directories #
+# #############
+examples/*
+src_bak*
+
+
+
 # Compiled source #
 ###################
 *.com
@@ -18,8 +25,8 @@ Thumbs.db
 
 # Backup files #
 ################
-*.swp
-*.swo
+*.sw*
+
 
 # Bin Files #
 #############
