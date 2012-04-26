@@ -1,5 +1,5 @@
 """
-Kinect Camera Interface
+Kinect RGB Camera Interface
 """
 from openni import *
 from PIL import Image
@@ -37,7 +37,7 @@ class RGB_Camera(HW_Interface):
 
     def getString(self):
         """
-        Retruns the string representation of the most current RGB image.
+        Retruns the binary string representation of the most current RGB image.
         """
         self.update()
         return self.img.get_raw_image_map()
