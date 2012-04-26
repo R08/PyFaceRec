@@ -78,10 +78,7 @@ class IR_Camera(HW_Interface):
         """
         Updates the Depth generator node.
         """
-        print "Updating Depth Generator..."
-
         err = self.ctx.wait_one_update_all(self.depth)
-        print "Done updating"
  
     
 
@@ -91,7 +88,7 @@ class IR_Camera(HW_Interface):
         Returns the most recent frame from the kinects IR camera.
         """ 
         self.update()
-        return Image.fromstring('P',( 640, 480 ), self.depth.get_raw_depth_map())
+        return Image.fromstring('L',( 640, 480 ), self.depth.get_raw_depth_map_8())
 
 
 
@@ -100,12 +97,11 @@ class IR_Camera(HW_Interface):
         """
         Returns a numpy array representation of the current frame.
         """
-        print "Creating Numpy array of depth Map:..."
-
         self.update()
         a = fromstring(self.depth.get_raw_depth_map(), dtype='uint16')
+        #a = array(self.depth.map)
         a.shape = (480, 640)
-        a = a.astype(uint8)
+        #a = a.astype(uint8)
         return a
 
 

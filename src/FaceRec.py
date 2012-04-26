@@ -96,8 +96,8 @@ class HaarDetectFace():
             #print x, y
             if x > 0 and x < 640 and y > 0 and y < 480:
                 d = IR.getDepthMap()[int(x), int(y)]
-                if d > 0:
-                    print "Face depth from camera: ", d
+                #if d > 0:
+                    #print "Face depth from camera: ", d
                 #small_rect = np.array([x, x+2, y, y+2]).astype(np.uint32)
 
 

@@ -42,24 +42,29 @@ haar_fig = glumpy.figure((1280, 480))
 haar_frame = haar_face.getFrame(RGB, IR)[0]
 haar_img = glumpy.image.Image(haar_frame)
 
-
+depth_frame = IR.getNumpyArray().astype(np.float32)
+depth_img = glumpy.image.Image(depth_frame)
 
 
 #crop_face = np.zeros([23, 23])
 
     
+
 # Draw with glumpy
 @haar_fig.event
 def on_draw():
-
     haar_fig.clear()
     haar_img.draw(x=0, y=0, z=0, width=640, height=480)
+    depth_img.draw(x=540, y=0, z=0, width=640, height=480)
+
 
 @haar_fig.event
 def on_idle(dt):
-    h_frame = haar_face.getFrame(RGB, IR)[0]
-    haar_frame[...] = h_frame
+    #h_frame = haar_face.getFrame(RGB, IR)[0]    
+    haar_frame[...] = haar_face.getFrame(RGB, IR)[0] #h_frame
+    depth_frame[...] = IR.getNumpyArray().astype(np.float32)
     haar_img.update()
+    depth_img.update()
     haar_fig.redraw()
 
 
